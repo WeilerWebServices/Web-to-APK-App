@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [[ `git remote` != *deploy* ]]; then
+  echo
+  echo "No deployment repo set up!";
+  echo
+  echo "run: ./bin/setup-repo";
+  echo
+else
+  if [[ $1 == "-f" ]]; then
+    git push deploy :deploy
+  fi
+  git push deploy
+fi

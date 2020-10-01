@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm -rf build
+mkdir build
+cp -r app/* build/
+./external/jacker/bin/jacker -c -o build/app.js build/src/main.js
+rm -r build/src

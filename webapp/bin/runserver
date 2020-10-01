@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+
+var http = require('http'),
+  url = require('url'),
+  path = require('path'),
+  fs = require('fs'),
+  root = path.join(path.dirname(fs.realpathSync(__filename)), '../app'),
+  port = process.argv[2] || 8080;
+
+http.createServer(function(request, response) {
+
+  var uri = url.parse(request.url).pathname,
+      filename = path.join(root, uri);
+
+  path.exists(filename, function(exists) {
+    if(!exists) {
+      response.writeHead(404, {'Content-Type': 'text/plain'});
+      response.end('404 Not Found\n');
+      return;
+    }
+
+    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+    var headers = {},
+        encoding = 'binary';
+
+    switch (path.extname(filename)) {
+      case '.html':
+        headers['Content-Type'] = 'text/html';
+        encoding = 'utf-8';
+        break;
+      case '.js':
+        headers['Content-Type'] = 'text/javascript';
+        encoding = 'utf-8';
+        break;
+      case '.css':
+        headers['Content-Type'] = 'text/css';
+        encoding = 'utf-8';
+        break;
+    }
+
+    fs.readFile(filename, encoding, function(error, file) {
+      if (error) {
+        response.writeHead(500, {'Content-Type': 'text/plain'});
+        response.end(error + '\n');
+        return;
+      }
+      response.writeHead(200, headers);
+      response.end(file, encoding);
+    });
+  });
+}).listen(parseInt(port));
+
+console.log('Server running at: http://localhost:' + port);

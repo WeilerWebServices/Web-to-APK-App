@@ -1,0 +1,41 @@
+creare website
+open android studio
+open web view in activity.xml
+
+open java folder:
+
+open main_activity.java
+
+MainActivity{
+privat webview MYWebview;
+
+public void oncreate(){
+MYWebview = (webView) findViewById(R.id.WebView);
+WebSetting webSetting = MYWebview.getSettings();
+webSettings.setJavascriptEnabled(true);
+myWebView.loadUrl("http://www.google.com");
+myWebView.setWebViewClient(new WebClient);
+}
+
+public void onBackPressed(){
+if(myWebView.canGoBack()){
+myWebView.goBack();
+}
+else{
+super.onBackPressed();
+}
+}
+
+open android mainfest.xml:
+
+<user-permission android:name="android.permission.Internet"></uses-permission>
+
+remove padding in activity_main.xml:
+
+remove all the paddings: paddingLeft,paddingRight,paddingTop,paddingBottom
+
+issue in app:
+
+open in same windows
+forward and backward button issues
+padding issues(width and height)

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Installing/updating jacker's npm packages"
+
+cd external/jacker
+npm install
+cd -

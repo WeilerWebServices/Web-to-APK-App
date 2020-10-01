@@ -1,0 +1,53 @@
+#!/bin/bash
+
+DEST="$1"
+
+if [ -z "$DEST" ]; then
+  echo "Specify destination for new webapp, e.g."
+  echo "  /home/kimjong/mywebapp"
+  read -p "Destination: " DEST
+  [ -n "$DEST" ] || exit
+fi
+
+eval DEST=$DEST
+
+echo
+echo "A new git repository will be created in $DEST"
+echo "and the webapp skeleton will be copied over and commited."
+echo
+read -p "Press Enter to continue"
+echo
+
+[ -d "$DEST" ] || mkdir "$DEST" || exit
+
+# get a clean copy of the reposityory and unarchive
+git archive master | tar -x -C "$DEST"
+
+# get all the submdoules
+midx=0
+modules=()
+for module in $(git submodule | sed -E 's/.[^ ]+ //' | sed 's/ .*//'); do
+  mpath=$(git config -f .gitmodules --get submodule.$module.path)
+  murl=$(git config -f .gitmodules --get submodule.$module.url)
+  modules[$midx]="$murl $mpath"
+  let "midx += 1"
+done
+
+cd "$DEST"
+git init
+
+echo
+echo "Adding submodules"
+echo
+rm -r external && mkdir external # git archive copies submodule directories, but not the submodules
+for module in "${modules[@]}"; do
+  git submodule add $module
+done
+
+# add all copied files and commit
+git add .
+git commit -m "Initial commit."
+
+echo
+echo "Done!"
+echo
